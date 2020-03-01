@@ -69,8 +69,9 @@ func findErrorPosition(bracketStack *list.List) {
 		if firstOpeningBracketIndex == 0 && isOpeningBracket(e.Value.(*StackValue).bracket) {
 			firstOpeningBracketIndex = e.Value.(*StackValue).index
 		}
-		if closingBracketIndex == 0 && isClosingBracket(e.Value.(*StackValue).bracket) {
+		if isClosingBracket(e.Value.(*StackValue).bracket) {
 			closingBracketIndex = e.Value.(*StackValue).index
+			break
 		}
 	}
 	if closingBracketIndex != 0 {
