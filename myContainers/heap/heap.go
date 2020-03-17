@@ -7,10 +7,6 @@ func outOfRange(x, l, r int) bool {
 	return true
 }
 
-type HeapModel interface {
-	Priority() int
-}
-
 /* Min-Heap implementation */
 type MinHeap struct {
 	arr []HeapElement
@@ -19,16 +15,14 @@ type MinHeap struct {
 
 type HeapElement struct {
 	index int
-	value HeapModel
-}
+	priority int
 
-func (h HeapElement) priority() int {
-	return h.value.Priority()
+	value interface{}
 }
 
 func (p *MinHeap) Init() {
 	p.arr = make([]HeapElement, 1)
-	p.arr[0] = HeapElement{0, nil}
+	p.arr[0] = HeapElement{0, 0,nil}
 	p.size = 0
 }
 
@@ -74,32 +68,14 @@ func (p *MinHeap) siftingUp() {
 		return
 	}
 	for parent := p.getParent(child); parent != nil; parent = p.getParent(child) {
-		if child.priority() < parent.priority() {
+		if child.priority < parent.priority {
 			p.swap(&child, &parent)
 		} else { break }
 	}
 }
 
-/* accessory type */
-type heapInt struct {
-	x int
-}
-
-func (h heapInt) Priority() int {
-	return h.x
-}
-/*               */
-
-func (p *MinHeap) Insert(value interface{}) {
-	var valueModel HeapModel
-
-	switch value.(type) {
-	case int:
-		valueModel = heapInt{value.(int)}
-	default:
-		valueModel = value.(HeapModel)
-	}
-	p.arr = append(p.arr, HeapElement{p.size + 1, valueModel})
+func (p *MinHeap) Insert(priority int, value interface{}) {
+	p.arr = append(p.arr, HeapElement{p.size + 1, priority, value})
 	p.size++
 	p.siftingUp()
 }
@@ -111,7 +87,7 @@ func (p MinHeap) getChild(parent *HeapElement) *HeapElement {
 	} else if outOfRange(childIndexRight, 1, p.Size()) {
 		return &p.arr[childIndexLeft]
 	} else {
-		if p.arr[childIndexLeft].priority() < p.arr[childIndexRight].priority() {
+		if p.arr[childIndexLeft].priority < p.arr[childIndexRight].priority {
 			return &p.arr[childIndexLeft]
 		} else {
 			return &p.arr[childIndexRight]
@@ -125,25 +101,25 @@ func (p *MinHeap) siftingDown() {
 		return
 	}
 	for child := p.getChild(parent); child != nil; child = p.getChild(parent) {
-		if child.priority() < parent.priority() {
+		if child.priority < parent.priority {
 			p.swap(&child, &parent)
 			parent = child
 		} else { break }
 	}
 }
 
-func (p *MinHeap) ExtractMin() HeapModel {
+func (p *MinHeap) ExtractMin() interface{} {
 	if frontElem := p.Front(); frontElem == nil {
 		return nil
 	}
 	frontElem := p.Front()
 	backElem := p.Back()
-	min := frontElem.value
+	minValue := frontElem.value
 	p.swap(&frontElem, &backElem)
 	p.arr = p.arr[:p.Size()]
 	p.size--
 	p.siftingDown()
-	return min
+	return minValue
 }
 
 func (p *MinHeap) Reset() {

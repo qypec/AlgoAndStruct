@@ -11,20 +11,8 @@ func TestInit(t *testing.T) {
 	h.Init()
 	require.Equal(t, h.size, 0)
 	require.Equal(t, len(h.arr), 1)
-	require.Equal(t, h.arr[0], HeapElement{0, nil})
+	require.Equal(t, h.arr[0], HeapElement{0, 0,nil})
 }
-
-
-/* accessory type */
-type myString struct {
-	str string
-}
-
-func (s myString) Priority() int {
-	return len(s.str)
-}
-/*               */
-
 
 func TestInsert(t *testing.T) {
 	var h MinHeap
@@ -36,12 +24,12 @@ func TestInsert(t *testing.T) {
 
 		h.Init()
 		for _, x := range testsInsert {
-			h.Insert(x)
+			h.Insert(x, x)
 		}
 
 		i := 1
 		for _, elem := range resultInsertIndexes {
-			require.Equal(t, h.arr[i].value.Priority(), elem)
+			require.Equal(t, h.arr[i].priority, elem)
 			i++
 		}
 
@@ -51,20 +39,21 @@ func TestInsert(t *testing.T) {
 /* Test 02 other types */
 	{
 
-		testsInsert := []myString{{"thr"}, {"1"}, {"fivee"},{"tw"}, {"four"}, {""}}
+		testsInsert := []string{"thr", "1", "fivee", "tw", "four", ""}
 		resultInsert := []HeapElement{
-			{1, myString{""}}, {2, myString{"tw"}}, {3, myString{"1"}},
-			{4, myString{"thr"}}, {5, myString{"four"}}, {6, myString{"fivee"}},
+			{1, 0, ""}, {2, 2, "tw"}, {3, 1, "1"},
+			{4, 3, "thr"}, {5, 4, "four"}, {6, 5, "fivee"},
 		}
 
 		h.Init()
 		for _, x := range testsInsert {
-			h.Insert(x)
+			h.Insert(len(x), x)
 		}
 
 		i := 1
 		for _, elem := range resultInsert {
 			require.Equal(t, h.arr[i].index, elem.index)
+			require.Equal(t, h.arr[i].priority, elem.priority)
 			require.Equal(t, h.arr[i].value, elem.value)
 			i++
 		}
@@ -79,39 +68,39 @@ func TestExtractMin(t *testing.T) {
 	h.Init()
 
 /* Test 00 basic */
-	h.Insert(1)
-	require.Equal(t, h.ExtractMin().Priority(), 1)
+	h.Insert(1, 1)
+	require.Equal(t, h.ExtractMin().(int), 1)
 
 /* Test 01 */
-	h.Insert(1)
-	h.Insert(5)
-	require.Equal(t, h.ExtractMin().Priority(), 1)
+	h.Insert(1, 1)
+	h.Insert(5, 5)
+	require.Equal(t, h.ExtractMin().(int), 1)
 
 /* Test 02 */
-	require.Equal(t, h.ExtractMin().Priority(), 5)
+	require.Equal(t, h.ExtractMin().(int), 5)
 
 /* Test 03 */
-	h.Insert(0)
-	h.Insert(15121)
-	require.Equal(t, h.ExtractMin().Priority(), 0)
+	h.Insert(0, 0)
+	h.Insert(15121, 15121)
+	require.Equal(t, h.ExtractMin().(int), 0)
 
 
 /* Test 04 */
-	require.Equal(t, h.ExtractMin().Priority(), 15121)
+	require.Equal(t, h.ExtractMin().(int), 15121)
 
 /* Test 05 */
-	h.Insert(100)
-	h.Insert(400)
-	h.Insert(10)
-	h.Insert(170)
-	h.Insert(111410)
-	h.Insert(-110)
-	h.Insert(17410)
-	require.Equal(t, h.ExtractMin().Priority(), -110)
-	require.Equal(t, h.ExtractMin().Priority(), 10)
-	require.Equal(t, h.ExtractMin().Priority(), 100)
-	require.Equal(t, h.ExtractMin().Priority(), 170)
-	require.Equal(t, h.ExtractMin().Priority(), 400)
-	require.Equal(t, h.ExtractMin().Priority(), 17410)
-	require.Equal(t, h.ExtractMin().Priority(), 111410)
+	h.Insert(100, 100)
+	h.Insert(400, 400)
+	h.Insert(10, 10)
+	h.Insert(170, 170)
+	h.Insert(111410, 111410)
+	h.Insert(-110, -110)
+	h.Insert(17410, 17410)
+	require.Equal(t, h.ExtractMin().(int), -110)
+	require.Equal(t, h.ExtractMin().(int), 10)
+	require.Equal(t, h.ExtractMin().(int), 100)
+	require.Equal(t, h.ExtractMin().(int), 170)
+	require.Equal(t, h.ExtractMin().(int), 400)
+	require.Equal(t, h.ExtractMin().(int), 17410)
+	require.Equal(t, h.ExtractMin().(int), 111410)
 }
