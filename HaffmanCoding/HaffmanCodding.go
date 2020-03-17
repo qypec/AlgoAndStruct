@@ -1,156 +1,23 @@
 package main
 
 import (
-	"fmt"
+	"github.com/AlgoAndStruct/myContainers/heap"
 	"bufio"
+	"fmt"
 	"os"
 	"strconv"
 )
 
-func OutOfRange(x, l, r int) bool {
-	if x >= l && x <= r {
-		return false
-	}
-	return true
+type myInt struct {
+	x int
 }
 
-type Priorier interface {
-	Priority() int
+func (i myInt) Priority() int {
+	return i.x
 }
-
-/* MinHeap */
-
-type MinHeap struct {
-	arr []HeapElement
-	size int
-}
-
-type HeapElement struct {
-	priority int
-	index int
-
-	value interface{}
-}
-
-func (e *HeapElement) Priority() int {
-	return e.priority
-}
-
-func (p *MinHeap) Init() {
-	p.arr = make([]HeapElement, 1)
-	p.arr[0] = HeapElement{0, 0, nil}
-	p.size = 0
-}
-
-func (p *MinHeap) Size() int { return p.size }
-
-func (p *MinHeap) Back() *HeapElement {
-	if p.Size() != 0 {
-		return &p.arr[p.Size()]
-	}
-	return nil
-}
-
-func (p *MinHeap) Front() *HeapElement {
-	if p.Size() != 0 {
-		return &p.arr[1]
-	}
-	return nil
-}
-
-func (p MinHeap) GetParent(child *HeapElement) *HeapElement {
-	parentIndex := int(child.index / 2)
-	if parentIndex != 0 {
-		return &p.arr[parentIndex]
-	}
-	return nil
-}
-
-func (p *MinHeap) siftingUp() {
-	child := p.Back()
-	if child == nil {
-		return
-	}
-	for parent := p.GetParent(child); parent != nil; parent = p.GetParent(child) {
-		// fmt.Println("up")
-		if child.Priority() < parent.Priority() {
-			p.swap(child.index, parent.index)
-			// child.index, parent.index = parent.index, child.index
-		} else { break }
-	}
-}
-
-func (p *MinHeap) Insert(elem HeapElement) {
-	elem.index = p.size + 1
-	p.arr = append(p.arr, elem)
-	p.size++
-	p.siftingUp()
-}
-
-func (p MinHeap) GetChild(parent *HeapElement) *HeapElement {
-	childIndexLeft, childIndexRight := int(parent.index * 2), int(parent.index * 2 + 1)
-	if OutOfRange(childIndexLeft, 1, p.Size()) && OutOfRange(childIndexRight, 1, p.Size()) {
-		return nil
-	} else if OutOfRange(childIndexRight, 1, p.Size()) {
-		return &p.arr[childIndexLeft]
-	} else {
-		if p.arr[childIndexLeft].Priority() < p.arr[childIndexRight].Priority() {
-			return &p.arr[childIndexLeft]
-		} else {
-			return &p.arr[childIndexRight]
-		}
-	}
-	return nil
-}
-
-func (p *MinHeap) siftingDown() {
-	parent := p.Front()
-	if parent == nil {
-		return
-	}
-	for child := p.GetChild(parent); child != nil; child = p.GetChild(parent) {
-		if child.Priority() < parent.Priority() {
-			p.swap(child.index, parent.index)
-		} else { break }
-	}
-}
-
-func (p *MinHeap) swap(index_1, index_2 int) {
-	if p.Size() > 1 {
-		p.arr[index_1].priority, p.arr[index_2].priority = p.arr[index_2].priority, p.arr[index_1].priority
-		p.arr[index_1].value, p.arr[index_2].value = p.arr[index_2].value, p.arr[index_1].value
-	}
-}
-
-func (p *MinHeap) ExtractMin() *HeapElement {
-	if p.Size() == 0 { return nil }
-	min := *p.Front()
-	p.swap(1, p.Back().index)
-	p.arr = p.arr[:p.Size()]
-	p.size--
-	p.siftingDown()
-	return &min
-}
-
-// type TreeElement struct {
-// 	value interface{}
-// }
-
-// func (t *TreeElement) Priority() int {
-// 	return t.value.(*TreeValue).Priority()
-// }
-
-// type TreeValue struct {
-// 	frequency int
-// 	ch rune
-// }
-
-// func (t *TreeValue) Priority() int {
-// 	return t.frequency
-// }
 
 func main() {
-	var pQueue MinHeap
+	var pQueue heap.MinHeap
 
 	pQueue.Init()
 
@@ -165,7 +32,7 @@ func main() {
 		case "Insert":
 			scanner.Scan()
 			x, _ := strconv.Atoi(scanner.Text())
-			pQueue.Insert(HeapElement{x, 0, nil})
+			pQueue.Insert(myInt{x})
 		case "ExtractMin":
 			result = append(result, pQueue.ExtractMin().Priority())
 		}
@@ -176,91 +43,146 @@ func main() {
 	}
 }
 
+/* Tree */
 
-
-
-
-// /* Tree */
-
-// type TreeElement struct {
-// 	parent TreeElement
-// 	childLeft TreeElement
-// 	childRight TreeElement
-// 	value interface{}
-// }
-
-// type Tree struct {
-// 	root TreeElement
-// }
-
-// func NewTreeElement(value interface{}) TreeElement {
-// 	return &TreeElement{nil, nil, nil, value}
-// }
-
-// func (t *TreeElement) MakeParent(child_1 *TreeElement, child_2 *TreeElement) {
-// 	child_1.parent = t
-// 	child_2.parent = t
-// 	t.childLeft = child_1
-// 	t.childRight = child_2
-// }
-
-// func (t *TreeElement) Priority() int {
-// 	return t.value.(TreeValue).frequency
-// }
-
-// /* Tree Element value */
-
-// type TreeValue struct {
-// 	frequency int
-// 	ch rune
-// }
-
-// func (t *TreeValue) isSymb() bool {
-// 	if t.ch != '0' {
-// 		return true
-// 	}
-// 	return false
-// }
-
-// /* Haffman */
-
-// type Haffman struct {
-// 	codeStringSize int
-// 	codeTable map[rune]string
-// 	code string
-// }
-
-// func HaffmanAlgorithm(str string, frequencyTable map[rune]int) {
-// 	var HaffmanTree Tree
-// 	var freqPrQueue MinHeap
-
-// 	freqPrQueue.Init()
-// 	for ch, frequency := range(frequencyTable) {
-// 		freqPrQueue.Insert(NewTreeElement(&TreeValue{frequency, ch}))
-// 	}
-
-// 	for child_1 := freqPrQueue.ExtractMin(); freqPrQueue.Size() != 0; child_1 := freqPrQueue.ExtractMin() {
-// 		child_2 := freqPrQueue.ExtractMin()
-// 		parent := NewTreeElement(&TreeElement{child_1.value.(TreeValue).frequency + child_2.value.(TreeValue).frequency, '0'})
-// 		parent.MakeParent(child_1, child_2)
-// 		freqPrQueue.Insert(parent)
-// 	}
-// 	HaffmanTree.root = freqPrQueue.ExtractMin()
-// }
-
-// func main() {
-// 	scanner := bufio.NewScanner(os.Stdin)
-// 	scanner.Scan()
-
-// 	frequencyTable := make(map[rune]int)
-// 	for _, ch := range(scanner.Text()) {
-// 		frequencyTable[rune(ch)]++
-// 	}
-
-// 	HaffmanAlgorithm(scanner.Text(), frequencyTable)
-
-// 	// for k, v := range frequencyTable {
-// 	// 	fmt.Printf("key: %c, value: %d\n", k, v)
-// 	// }
-
-// }
+//type Tree struct {
+//	root *TreeElement
+//}
+//
+//type TreeElement struct {
+//	parent *TreeElement
+//	childLeft *TreeElement
+//	childRight *TreeElement
+//
+//	value interface{}
+//}
+//
+//func (t *TreeElement) print() string {
+//	if t == nil {
+//		return ""
+//	}
+//	return fmt.Sprintf("\tparent : %v\n\tchildLeft : %v\n\tchildRight : %v\n \t'%c' %v\n", t.parent, t.childLeft, t.childRight, rune(t.value.(TreeValue).ch), t.value.(TreeValue).frequency)
+//}
+//
+//func (t *TreeElement) Priority() int {
+//	return t.value.(TreeValue).Priority()
+//}
+//
+//func (t *TreeElement) MakeParent(child_1 *TreeElement, child_2 *TreeElement) {
+//	child_1.parent = t
+//	child_2.parent = t
+//	t.childLeft = &TreeElement{child_1.parent, child_1.childLeft, child_1.childRight, child_1.value}
+//	t.childRight = &TreeElement{child_2.parent, child_2.childLeft, child_2.childRight, child_2.value}
+//}
+//
+//
+//type TreeValue struct {
+//	frequency int
+//	ch rune
+//}
+//
+//func (t TreeValue) Priority() int {
+//	return t.frequency
+//}
+//
+//func (t TreeValue) isSymb() bool {
+//	if t.ch != '0' {
+//		return true
+//	}
+//	return false
+//}
+//
+//func NewTreeElement(value interface{}) *TreeElement {
+//	return &TreeElement{nil, nil, nil, value}
+//}
+//
+///* Haffman */
+//
+//type Haffman struct {
+//	codeStringSize int
+//	codeTable map[rune][]rune
+//	code []rune
+//}
+//
+//func FillCodeTable(elem *TreeElement, code []rune, codeTable map[rune][]rune) []rune {
+//	if elem.value.(TreeValue).isSymb() {
+//		codeTable[elem.value.(TreeValue).ch] = append(codeTable[elem.value.(TreeValue).ch], code...)
+//		code = code[:len(code) - 1]
+//	}
+//	if elem.childLeft != nil {
+//		code = append(code, rune('0'))
+//		code = FillCodeTable(elem.childLeft, code, codeTable)
+//	}
+//	if elem.childRight != nil {
+//		code = append(code, rune('1'))
+//		code = FillCodeTable(elem.childRight, code, codeTable)
+//	}
+//	return code
+//}
+//
+//func HaffmanAlgorithm(str string, frequencyTable map[rune]int) *Haffman {
+//	var HaffmanTree Tree
+//	var freqPrQueue MinHeap
+//	var code []rune
+//	var H Haffman
+//	var child_1 TreeElement
+//
+//	freqPrQueue.Init()
+//	for ch, frequency := range(frequencyTable) {
+//		newElem := NewTreeElement(TreeValue{frequency, ch})
+//		freqPrQueue.Insert(newElem.Priority(), *newElem)
+//
+//	}
+//	if freqPrQueue.Size() == 0 {
+//		return nil
+//	}
+//	for i := 1; i < freqPrQueue.Size(); i++ {
+//		bla := freqPrQueue.arr[i].value.(TreeElement)
+//		fmt.Println(bla.print())
+//	}
+//	fmt.Println()
+//
+//	for child_1 = freqPrQueue.ExtractMin().value.(TreeElement); freqPrQueue.Size() != 0; child_1 = freqPrQueue.ExtractMin().value.(TreeElement) {
+//		child_2 := freqPrQueue.ExtractMin().value.(TreeElement)
+//		parent := NewTreeElement(TreeValue{child_1.Priority() + child_2.Priority(), '0'})
+//		fmt.Println(child_1.print())
+//		fmt.Println(child_2.print())
+//		fmt.Println(parent.print())
+//		parent.MakeParent(&child_1, &child_2)
+//		freqPrQueue.Insert(parent.Priority(), *parent)
+//	}
+//	HaffmanTree.root = &child_1
+//
+//	// H.codeStringSize = HaffmanTree.root.Priority()
+//	H.codeTable = make(map[rune][]rune)
+//	FillCodeTable(HaffmanTree.root, code, H.codeTable)
+//
+//	for _, letter := range str {
+//		H.code = append(H.code, H.codeTable[rune(letter)]...)
+//	}
+//	return &H
+//}
+//
+//func main() {
+//	// scanner := bufio.NewScanner(os.Stdin)
+//	// scanner.Scan()
+//
+//	str := "beep boop"
+//
+//	frequencyTable := make(map[rune]int)
+//	for _, ch := range(str/*scanner.Text()*/) {
+//		frequencyTable[rune(ch)]++
+//	}
+//
+//	H := HaffmanAlgorithm(str/*scanner.Text()*/, frequencyTable)
+//	if H == nil {
+//		return
+//	}
+//	H.codeStringSize = len(H.code)
+//	fmt.Println(len(frequencyTable), H.codeStringSize)
+//	for k, v := range H.codeTable {
+//		fmt.Printf("%c: %s\n", k, string(v))
+//	}
+//	fmt.Println(string(H.code))
+//
+//}
