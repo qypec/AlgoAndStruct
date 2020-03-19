@@ -17,7 +17,7 @@ func TestInit(t *testing.T) {
 func TestInsert(t *testing.T) {
 	var h MinHeap
 
-/* Test 01 */
+	/* Test 01 */
 	{
 		testsInsert := []int{1, 3, 4, 9, 18, -100}
 		resultInsertIndexes := []int{-100, 3, 1, 9, 18, 4}
@@ -60,6 +60,83 @@ func TestInsert(t *testing.T) {
 
 		h.Reset()
 	}
+
+/* Test 03 */
+	{
+		testsInsert := []int{2, 3, 1, 2, 4, 2, 1, 2}
+		resultInsertIndexes := []int{1, 2, 1, 2, 4, 2, 2, 3}
+
+		h.Init()
+		for _, x := range testsInsert {
+			h.Insert(x, x)
+		}
+
+		i := 1
+		for _, elem := range resultInsertIndexes {
+			require.Equal(t, h.arr[i].priority, elem)
+			i++
+		}
+
+		h.Reset()
+	}
+
+/* Test 04 */
+	{
+		testsInsert := []int{1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+		resultInsertIndexes := []int{1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
+
+		h.Init()
+		for _, x := range testsInsert {
+			h.Insert(x, x)
+		}
+
+		i := 1
+		for _, elem := range resultInsertIndexes {
+			require.Equal(t, h.arr[i].priority, elem)
+			i++
+		}
+
+		h.Reset()
+	}
+
+/* Test 05 */
+	{
+		testsInsert := []int{2, 3, 1, 2, 4, 2, 1, 2, 0, 2, 2, 1, 15, 18, 42}
+		resultInsertIndexes := []int{0, 1, 1, 2, 2, 1, 2, 3, 2, 4, 2, 2, 15, 18, 42}
+
+		h.Init()
+		for _, x := range testsInsert {
+			h.Insert(x, x)
+		}
+
+		i := 1
+		for _, elem := range resultInsertIndexes {
+			require.Equal(t, h.arr[i].priority, elem)
+			i++
+		}
+
+		h.Reset()
+	}
+
+/* Test 06 */
+	{
+		testsInsert := []int{1, 3, 4, 2, 2, 2, 1}
+		resultInsertIndexes := []int{1, 2, 1, 3, 2, 4, 2}
+
+		h.Init()
+		for _, x := range testsInsert {
+			h.Insert(x, x)
+		}
+
+		i := 1
+		for _, elem := range resultInsertIndexes {
+			require.Equal(t, h.arr[i].priority, elem)
+			i++
+		}
+
+		h.Reset()
+	}
+
 }
 
 func TestExtractMin(t *testing.T) {
