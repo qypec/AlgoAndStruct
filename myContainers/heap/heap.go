@@ -63,6 +63,7 @@ func (p *MinHeap) swap(child, parent **HeapElement) {
 }
 
 func (p *MinHeap) siftingUp() {
+
 	child := p.Back()
 	if child == nil {
 		return
@@ -81,7 +82,7 @@ func (p *MinHeap) Insert(priority int, value interface{}) {
 }
 
 func (p MinHeap) getChild(parent *HeapElement) *HeapElement {
-	childIndexLeft, childIndexRight := int(parent.index*2), int(parent.index*2+1)
+	childIndexLeft, childIndexRight := int(parent.index * 2), int(parent.index * 2 + 1)
 	if outOfRange(childIndexLeft, 1, p.Size()) && outOfRange(childIndexRight, 1, p.Size()) {
 		return nil
 	} else if outOfRange(childIndexRight, 1, p.Size()) {
@@ -96,6 +97,7 @@ func (p MinHeap) getChild(parent *HeapElement) *HeapElement {
 }
 
 func (p *MinHeap) siftingDown() {
+
 	parent := p.Front()
 	if parent == nil {
 		return
@@ -103,7 +105,6 @@ func (p *MinHeap) siftingDown() {
 	for child := p.getChild(parent); child != nil; child = p.getChild(parent) {
 		if child.priority < parent.priority {
 			p.swap(&child, &parent)
-			parent = child
 		} else { break }
 	}
 }
