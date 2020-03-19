@@ -1,12 +1,32 @@
+/*
+	По данной непустой строке s длины не более 10^4 , состоящей из строчных букв латинского алфавита,
+	постройте оптимальный беспрефиксный код. В первой строке выведите количество различных букв k,
+	встречающихся в строке, и размер получившейся закодированной строки.
+	В следующих k строках запишите коды букв в формате "letter: code".
+	В последней строке выведите закодированную строку.
+ */
+
 package main
 
 import (
 	"bufio"
+	"container/list"
 	"fmt"
 	"github.com/AlgoAndStruct/myContainers/binaryTree"
-	"github.com/AlgoAndStruct/myContainers/heap"
 	"os"
 )
+
+// Custom method for List
+// Adds an item to a list in sorted order
+func PushSort(lst *list.List, value interface{}) *list.Element {
+	newFrequency := value.(*binaryTree.Element).Value.(letter).frequency
+	for e := lst.Front(); e != nil; e = e.Next() {
+		if newFrequency <= e.Value.(*binaryTree.Element).Value.(letter).frequency {
+			return lst.InsertBefore(value, e)
+		}
+	}
+	return lst.PushBack(value)
+}
 
 type letter struct {
 	frequency int
@@ -14,8 +34,8 @@ type letter struct {
 }
 
 type EncryptedInfo struct {
-	frequencyTable map[rune]int
-	letterTable map[rune][]rune
+	frequencyTable map[rune]int // <letter>: <number of letter in the string>
+	letterTable map[rune][]rune // <letter>: <letter code>
 	str []rune
 }
 
@@ -43,9 +63,6 @@ func isLetterElement(elem *binaryTree.Element) bool {
 func FillLetterTable(elem *binaryTree.Element, code []rune, letterTable map[rune][]rune) []rune {
 	if isLetterElement(elem) {
 		letterTable[elem.Value.(letter).ch] = append(letterTable[elem.Value.(letter).ch], code...)
-		if len(code) > 0 {
-			code = code[:len(code)-1]
-		}
 	}
 	if elem.ChildLeft != nil {
 		code = append(code, rune('0'))
@@ -55,18 +72,22 @@ func FillLetterTable(elem *binaryTree.Element, code []rune, letterTable map[rune
 		code = append(code, rune('1'))
 		code = FillLetterTable(elem.ChildRight, code, letterTable)
 	}
+	if len(code) > 0 {
+		code = code[:len(code)-1]
+	}
 	return code
 }
 
 func ComposeEncryptedInfo(encryp *EncryptedInfo, HaffmanTree *binaryTree.Tree, unencrypted string) *EncryptedInfo {
 	var code []rune
 
-	if !HaffmanTree.Root.HasChilds() {
+	if !HaffmanTree.Root.HasChilds() { // kostil`
 		code = append(code, rune('0'))
 	}
 	encryp.letterTable = make(map[rune][]rune)
 	FillLetterTable(HaffmanTree.Root, code, encryp.letterTable)
-	for _, letter := range unencrypted {
+
+	for _, letter := range unencrypted { // compose a encrypted string
 		encryp.str = append(encryp.str, encryp.letterTable[rune(letter)]...)
 	}
 	return encryp
@@ -75,24 +96,27 @@ func ComposeEncryptedInfo(encryp *EncryptedInfo, HaffmanTree *binaryTree.Tree, u
 func HaffmanAlgorithm(unencrypted string) *EncryptedInfo {
 	var encryp EncryptedInfo
 	var leftChild, rightChild *binaryTree.Element
-	var freqPrQueue heap.MinHeap
 
-	freqPrQueue.Init()
+	sortLst := list.New()
 	encryp.frequencyTable = ComposeFrequencyTable(unencrypted)
-	for ch, frequency := range encryp.frequencyTable { // make a priority queue of tree`s elements
-		freqPrQueue.Insert(frequency, binaryTree.MakeElement(letter{frequency, ch}))
+	for ch, frequency := range encryp.frequencyTable { // make a sorting list of tree`s elements
+		PushSort(sortLst, binaryTree.MakeElement(letter{frequency, ch}))
 	}
-	if freqPrQueue.Size() == 0 {
+	if sortLst.Len() == 0 {
 		return nil
 	}
 
-	for freqPrQueue.Size() != 1 { // make a Haffman tree
-		if ok := freqPrQueue.ExtractMin(); ok != nil { leftChild = ok.(*binaryTree.Element) }
-		if ok := freqPrQueue.ExtractMin(); ok != nil { rightChild = ok.(*binaryTree.Element) }
+	for sortLst.Len() != 1 { // make a Haffman tree
+		if ok := sortLst.Front(); ok != nil {
+			leftChild = sortLst.Remove(sortLst.Front()).(*binaryTree.Element)
+		}
+		if ok := sortLst.Front(); ok != nil {
+			rightChild = sortLst.Remove(sortLst.Front()).(*binaryTree.Element)
+		}
 		parent := MakeParent(leftChild, rightChild)
-		freqPrQueue.Insert(parent.Value.(letter).frequency, parent)
+		PushSort(sortLst, parent)
 	}
-	HaffmanTree := binaryTree.MakeRoot(freqPrQueue.ExtractMin().(*binaryTree.Element))
+	HaffmanTree := binaryTree.MakeRoot(sortLst.Front().Value.(*binaryTree.Element))
 	return ComposeEncryptedInfo(&encryp, HaffmanTree, unencrypted)
 }
 
