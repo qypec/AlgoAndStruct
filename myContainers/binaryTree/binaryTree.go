@@ -2,29 +2,29 @@ package binaryTree
 
 /* binaryTree implementation */
 type Tree struct {
-	root *Element
+	Root *Element
 }
 
 type Element struct {
 	parent *Element
-	childLeft *Element
-	childRight *Element
+	ChildLeft *Element
+	ChildRight *Element
 
 	Value interface{}
 }
 
-func MakeParent(childLeft *Element, childRight *Element) *Element {
+func MakeParent(ChildLeft *Element, ChildRight *Element) *Element {
 	var t Element
 
 	t.parent = nil
 	t.Value = nil
-	t.childLeft = childLeft
-	t.childRight = childRight
+	t.ChildLeft = ChildLeft
+	t.ChildRight = ChildRight
 	return &t
 }
 
 func (t Element) HasChilds() bool {
-	return t.childLeft != nil || t.childRight != nil
+	return t.ChildLeft != nil || t.ChildRight != nil
 }
 
 func (t Element) HasParent() bool {
@@ -35,8 +35,8 @@ func MakeElement(value interface{}) *Element {
 	var t Element
 
 	t.parent = nil
-	t.childLeft = nil
-	t.childRight = nil
+	t.ChildLeft = nil
+	t.ChildRight = nil
 	t.Value = value
 	return &t
 }
@@ -44,6 +44,6 @@ func MakeElement(value interface{}) *Element {
 func MakeRoot(element *Element) *Tree {
 	var t Tree
 
-	t.root = element
+	t.Root = element
 	return &t
 }
