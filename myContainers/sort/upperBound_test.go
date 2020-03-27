@@ -7,25 +7,25 @@ import (
 )
 
 type testUppedBound struct {
-	a []float64
-	toFind float64
+	a []int
+	toFind int
 }
 
 func TestUpperBound(t *testing.T) {
 	numberOfCases := 0
 
 	testsValue := []testUppedBound{
-		/* 0 */ {[]float64{1, 3, 5, 7, 9, 11, 13, 15}, 3}, // ascending order
-		/* 1 */ {[]float64{15, 13, 11, 9, 7, 5, 3, 1}, 3}, // descending order
-		/* 2 */ {[]float64{1, 3, 5, 7, 9, 11, 13, 15}, 6},
-		/* 3 */ {[]float64{15, 13, 11, 9, 7, 5, 3, 1}, 6},
-		/* 4 */ {[]float64{1, 3, 5, 7, 9, 11, 13, 15}, 20}, // greater than anything ascending
-		/* 5 */ {[]float64{15, 13, 11, 9, 7, 5, 3, 1}, 20}, // greater than anything descending
-		/* 6 */ {[]float64{1, 3, 5, 7, 9, 11, 13, 15}, 14},
-		/* 7 */ {[]float64{15, 13, 11, 9, 7, 5, 3, 1}, 14},
-		/* 8 */ {[]float64{1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 14},
-		/* 9 */ {[]float64{1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 1},
-		/* 10 */ {[]float64{1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 0},
+		/* 0 */ {[]int{1, 3, 5, 7, 9, 11, 13, 15}, 3}, // ascending order
+		/* 1 */ {[]int{15, 13, 11, 9, 7, 5, 3, 1}, 3}, // descending order
+		/* 2 */ {[]int{1, 3, 5, 7, 9, 11, 13, 15}, 6},
+		/* 3 */ {[]int{15, 13, 11, 9, 7, 5, 3, 1}, 6},
+		/* 4 */ {[]int{1, 3, 5, 7, 9, 11, 13, 15}, 20}, // greater than anything ascending
+		/* 5 */ {[]int{15, 13, 11, 9, 7, 5, 3, 1}, 20}, // greater than anything descending
+		/* 6 */ {[]int{1, 3, 5, 7, 9, 11, 13, 15}, 14},
+		/* 7 */ {[]int{15, 13, 11, 9, 7, 5, 3, 1}, 14},
+		/* 8 */ {[]int{1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 14},
+		/* 9 */ {[]int{1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 1},
+		/* 10 */ {[]int{1, 1, 1, 1, 1, 1, 1, 1, 1, 1}, 0},
 	}
 
 	testsExpected := []int{

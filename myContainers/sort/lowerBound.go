@@ -1,6 +1,6 @@
 package sort
 
-func isAscending(a []float64) bool {
+func isAscending(a []int) bool {
 	if a[0] <= a[len(a) - 1] {
 		return true
 	}
@@ -10,7 +10,7 @@ func isAscending(a []float64) bool {
 /* finds the first element that is strictly less than the given(toFind) */
 /* array a must be sorted */
 /* log(n) */
-func LowerBound(a []float64, toFind float64, l, r int) int {
+func LowerBound(a []int, toFind int, l, r int) int {
 	if isAscending(a) {
 		if a[0] < toFind {
 			return 0
