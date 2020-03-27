@@ -16,11 +16,11 @@ import (
 )
 
 /* nlog(n) */
-func LnIS(arr []float64, n int) []int {
-	d := make([]float64, n + 1) // d[i] is the last element of a subsequence of length i
-	d[0] = math.Inf(1)
+func LnIS(arr []int, n int) []int {
+	d := make([]int, n + 1) // d[i] is the last element of a subsequence of length i
+	d[0] = math.MaxInt32
 	for i := 1; i < n + 1; i++ {
-		d[i] = math.Inf(-1)
+		d[i] = math.MinInt32
 	}
 	lengths := make([]int, n) // lengths[i] is the maximum length of a subsequence with the last element a[i]
 	prev := make([]int, n + 1) // prev[i] is the index d[i] in the array a
@@ -29,7 +29,7 @@ func LnIS(arr []float64, n int) []int {
 	for i := 0; i < n; i++ { // filling lengths, d, prev
 		firstSuitableIndex := sort.LowerBound(d, arr[i], 0, len(d) - 1)
 		if d[firstSuitableIndex - 1] >= arr[i] && d[firstSuitableIndex] <= arr[i] {
-			if d[firstSuitableIndex] == math.Inf(-1) {
+			if d[firstSuitableIndex] == math.MinInt32 {
 				lengths[i] = firstSuitableIndex
 				subSequenceSize = firstSuitableIndex
 			} else {
@@ -62,11 +62,11 @@ func main() {
 	n, _ := strconv.Atoi(scanner.Text())
 
 	/* scanning array */
-	arr := make([]float64, 0)
+	arr := make([]int, 0)
 	for i := 0; i < n; i++ {
 		scanner.Scan()
 		x, _ := strconv.Atoi(scanner.Text())
-		arr = append(arr, float64(x))
+		arr = append(arr, x)
 	}
 
 	subSequence := LnIS(arr, n)
