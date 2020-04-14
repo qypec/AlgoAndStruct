@@ -9,11 +9,42 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/AlgoAndStruct/myContainers/sort"
 	"math"
 	"os"
 	"strconv"
 )
+
+func isAscending(a []int) bool {
+	if a[0] <= a[len(a)-1] {
+		return true
+	}
+	return false
+}
+
+/* finds the first element that is strictly less than the given(toFind) */
+/* array a must be sorted */
+/* log(n) */
+func lowerBound(a []int, toFind int, l, r int) int {
+	if isAscending(a) {
+		if a[0] < toFind {
+			return 0
+		} else {
+			return -1
+		}
+	}
+
+	fix := -1
+	for l <= r {
+		m := l + int((r-l)/2)
+		if a[m] < toFind {
+			fix = m
+			r = m - 1
+		} else {
+			l = m + 1
+		}
+	}
+	return fix
+}
 
 /* nlog(n) */
 func lds(arr []int, n int) []int {
@@ -27,7 +58,7 @@ func lds(arr []int, n int) []int {
 
 	subSequenceSize := 0
 	for i := 0; i < n; i++ { // filling lengths, d, prev
-		firstSuitableIndex := sort.LowerBound(d, arr[i], 0, len(d)-1)
+		firstSuitableIndex := lowerBound(d, arr[i], 0, len(d)-1)
 		if d[firstSuitableIndex-1] >= arr[i] && d[firstSuitableIndex] <= arr[i] {
 			if d[firstSuitableIndex] == math.MinInt32 {
 				lengths[i] = firstSuitableIndex
